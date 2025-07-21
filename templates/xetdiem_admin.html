@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Xét duyệt Điểm rèn luyện{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white">
+        <h1 class="h4 mb-0">Xét duyệt Minh chứng Hoạt động</h1>
+    </div>
+    <div class="card-body">
+        {% for ma_sv, data in submissions_by_student.items() %}
+        <div class="accordion" id="accordion-{{ ma_sv }}">
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header" id="heading-{{ ma_sv }}">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ ma_sv }}">
+                        <strong>{{ data.ho_ten }} ({{ ma_sv }})</strong> - <span class="badge bg-warning ms-2">{{ data.submissions|length }} minh chứng chờ duyệt</span>
+                    </button>
+                </h2>
+                <div id="collapse-{{ ma_sv }}" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            {% for sub in data.submissions %}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <p class="mb-1"><strong>Hoạt động:</strong> {{ sub.ten_hoat_dong }} (+{{ sub.diem }} điểm)</p>
+                                        <p class="mb-0"><strong>Học kỳ:</strong> {{ sub.hoc_ky }}</p>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-outline-info btn-sm me-2" type="button" data-bs-toggle="collapse" data-bs-target="#minhchung-{{ sub.id }}">
+                                            Xem minh chứng <i class="bi bi-caret-down-fill"></i>
+                                        </button>
+                                        <a href="{{ url_for('approve_submission', submission_id=sub.id) }}" class="btn btn-success btn-sm">Duyệt</a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Khu vực hiển thị ảnh thu nhỏ -->
+                                <div class="collapse" id="minhchung-{{ sub.id }}">
+                                    <div class="card card-body p-2 mt-2" style="max-width: 200px;">
+                                        <!-- **THAY ĐỔI: Ảnh thu nhỏ, khi nhấn vào sẽ mở ảnh lớn** -->
+                                        <img src="{{ url_for('uploaded_file', filename=sub.minh_chung_url) }}" 
+                                             class="img-fluid rounded" 
+                                             alt="Minh chứng (nhỏ)" 
+                                             style="cursor: pointer;"
+                                             data-bs-toggle="modal" 
+                                             data-bs-target="#modal-image-{{ sub.id }}">
+                                    </div>
+                                </div>
+
+                                <!-- **THAY ĐỔI: Modal (cửa sổ pop-up) để hiển thị ảnh lớn** -->
+                                <div class="modal fade" id="modal-image-{{ sub.id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Minh chứng: {{ sub.ten_hoat_dong }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body text-center" style="max-width: 50%">
+                                                <img src="{{ url_for('uploaded_file', filename=sub.minh_chung_url) }}" class="img-fluid d-block mx-auto" alt="Minh chứng (lớn)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center text-muted p-4">Không có minh chứng nào đang chờ duyệt.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

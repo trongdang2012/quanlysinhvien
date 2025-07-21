@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Nộp minh chứng Điểm rèn luyện{% endblock %}
+{% block content %}
+<div class="row">
+    <!-- Cột nộp minh chứng -->
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h1 class="h4 mb-0">Nộp minh chứng tham gia hoạt động</h1>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('submit_activity') }}" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="hoat_dong_id" class="form-label">Chọn hoạt động đã tham gia</label>
+                        <select class="form-select" id="hoat_dong_id" name="hoat_dong_id" required>
+                            <option value="" disabled selected>-- Vui lòng chọn --</option>
+                            {% for activity in activities %}
+                            <option value="{{ activity.id }}">{{ activity.ten_hoat_dong }} ({{ activity.hoc_ky }}, +{{ activity.diem }} điểm)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="minh_chung" class="form-label">Tải lên ảnh minh chứng</label>
+                        <input class="form-control" type="file" id="minh_chung" name="minh_chung" accept="image/*" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Nộp</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Cột lịch sử -->
+    <div class="col-lg-7">
+         <div class="card">
+            <div class="card-header bg-white">
+                <h2 class="h5 mb-0">Lịch sử nộp minh chứng</h2>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for sub in my_submissions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1"><strong>{{ sub.ten_hoat_dong }}</strong> (+{{ sub.diem }} điểm)</p>
+                            <small class="text-muted">{{ sub.ngay_dang_ky.strftime('%d-%m-%Y %H:%M') }}</small>
+                        </div>
+                        {% if sub.trang_thai == 'chờ duyệt' %}
+                        <span class="badge bg-warning">Chờ duyệt</span>
+                        {% elif sub.trang_thai == 'đã duyệt' %}
+                        <span class="badge bg-success">Đã duyệt</span>
+                        {% else %}
+                        <span class="badge bg-danger">Từ chối</span>
+                        {% endif %}
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted">Bạn chưa nộp minh chứng nào.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

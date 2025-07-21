@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Chỉnh sửa Hoạt động{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h1 class="h4 mb-0">Chỉnh sửa Hoạt động</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="ten_hoat_dong" class="form-label">Tên Hoạt động</label>
+                        <input type="text" class="form-control" id="ten_hoat_dong" name="ten_hoat_dong" value="{{ activity.ten_hoat_dong }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="diem" class="form-label">Điểm</label>
+                            <input type="number" class="form-control" id="diem" name="diem" value="{{ activity.diem }}" min="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hoc_ky" class="form-label">Học kỳ</label>
+                            <input type="text" class="form-control" id="hoc_ky" name="hoc_ky" value="{{ activity.hoc_ky }}" required>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ url_for('hoatdong') }}" class="btn btn-secondary me-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

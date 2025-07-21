@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+    <title>{% block title %}Quản lý Sinh viên{% endblock %}</title>
+    <style>
+        body { 
+            background-color: #f8f9fa;
+            /* **THAY ĐỔI: Thêm padding-top để nội dung không bị thanh menu che khuất** */
+            padding-top: 56px; /* Điều chỉnh lại cho vừa với chiều cao của navbar */
+        }
+        .container { max-width: 1200px; }
+        .card { border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .table { vertical-align: middle; }
+        
+        .navbar-nav .nav-link {
+            transition: background-color 0.2s ease-in-out;
+        }
+        .navbar-nav .nav-link:hover, .navbar-nav .dropdown-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.2); 
+        }
+    </style>
+</head>
+<body>
+    <!-- **THAY ĐỔI: Thêm class `fixed-top` để ghim thanh menu một cách chuẩn xác hơn** -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-people-fill"></i> QUẢN LÝ SINH VIÊN
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Menu bên trái -->
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Sinh viên</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('monhoc') }}">Môn học</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('diem') }}">Điểm học tập</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('diemrenluyen') }}">Điểm rèn luyện</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('xetdiem') }}">Xét điểm rèn luyện</a>
+                    </li>
+                </ul>
+                {% endif %}
+
+                <!-- Menu bên phải -->
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> Chào, {{ current_user.username }} ({{ current_user.role }})
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if current_user.role == 'admin' %}
+                                <li><a class="dropdown-item" href="{{ url_for('hoatdong') }}">Quản lý Hoạt động</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Đăng nhập</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- **THAY ĐỔI: Thêm class `mt-4` để tạo khoảng cách trực quan** -->
+    <main class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center text-muted py-4 mt-4 bg-light">
+        <p>&copy; 2025 - Ứng dụng Quản lý Sinh viên</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chi tiết Điểm rèn luyện
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white">
+        <h1 class="h4 mb-0">Chi tiết Điểm rèn luyện</h1>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Sinh viên:</strong> {{ student.ho_ten }}</p>
+                <p><strong>Mã Sinh viên:</strong> {{ drl_summary.ma_sv }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Học kỳ:</strong> {{ drl_summary.hoc_ky }}</p>
+                <p><strong>Điểm Cơ bản:</strong> {{ drl_summary.diem_co_ban if drl_summary.diem_co_ban is not none else 0 }}</p>
+                <p><strong>Điểm Cộng Hoạt động:</strong> {{ drl_summary.diem_cong_hoat_dong if drl_summary.diem_cong_hoat_dong is not none else 0 }}</p>
+                <p><strong>Điểm Trừ:</strong> {{ drl_summary.diem_tru if drl_summary.diem_tru is not none else 0 }}</p>
+                <p><strong>Tổng điểm:</strong> <span class="fs-5 text-danger"><strong>{{ drl_summary.tong_diem if drl_summary.tong_diem is not none else 0 }}</strong></span></p>
+            </div>
+        </div>
+        
+        <h2 class="h5 mt-4">Các hoạt động đã được duyệt</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tên Hoạt động</th>
+                        <th class="text-center">Điểm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in activities %}
+                    <tr>
+                        <td>{{ activity.ten_hoat_dong }}</td>
+                        <td class="text-center"><b>+{{ activity.diem }}</b></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" class="text-center text-muted">Không có hoạt động nào được ghi nhận cho học kỳ này.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('diemrenluyen') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Quay lại
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

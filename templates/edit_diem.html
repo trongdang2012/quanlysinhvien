@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chỉnh sửa Điểm học tập
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h1 class="h4 mb-0">Chỉnh sửa Điểm học tập</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="ma_sv" class="form-label">Mã Sinh viên</label>
+                        <input type="text" class="form-control" id="ma_sv" name="ma_sv" value="{{ record.ma_sv }}" disabled>
+                    </div>
+                     <div class="mb-3">
+                        <label for="ma_mon_hoc" class="form-label">Môn học</label>
+                        <select class="form-select" id="ma_mon_hoc" name="ma_mon_hoc" required>
+                            <option value="" disabled>-- Chọn môn học --</option>
+                            {% for mon in mon_hoc_list %}
+                            <option value="{{ mon.ma_mon_hoc }}" {% if mon.ma_mon_hoc == record.ma_mon_hoc %}selected{% endif %}>
+                                {{ mon.ten_mon_hoc }} ({{ mon.ma_mon_hoc }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="diem_qua_trinh" class="form-label">Điểm quá trình</label>
+                            <input type="number" class="form-control" id="diem_qua_trinh" name="diem_qua_trinh" value="{{ record.diem_qua_trinh }}" step="0.1" min="0" max="10" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="diem_thi" class="form-label">Điểm thi</label>
+                            <input type="number" class="form-control" id="diem_thi" name="diem_thi" value="{{ record.diem_thi }}" step="0.1" min="0" max="10" required>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ url_for('diem') }}" class="btn btn-secondary me-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

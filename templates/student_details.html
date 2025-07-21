@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chi tiết Sinh viên - {{ student.ho_ten }}
+{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">Thông tin chi tiết: {{ student.ho_ten }}</h1>
+        {% if current_user.role == 'admin' %}
+        <div>
+            <a href="{{ url_for('edit', ma_sv=student.ma_sv) }}" class="btn btn-warning btn-sm" title="Sửa">
+                <i class="bi bi-pencil-square"></i> Sửa thông tin
+            </a>
+            <a href="{{ url_for('delete', ma_sv=student.ma_sv) }}" class="btn btn-danger btn-sm" title="Xoá" onclick="return confirm('Bạn có chắc muốn xoá sinh viên này và tất cả điểm liên quan?')">
+                <i class="bi bi-trash3-fill"></i> Xóa sinh viên
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Mã Sinh viên:</strong> {{ student.ma_sv }}</p>
+                <p><strong>Họ tên:</strong> {{ student.ho_ten }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Ngày sinh:</strong> {{ student.ngay_sinh.strftime('%d/%m/%Y') }}</p>
+                <p><strong>Lớp:</strong> {{ student.lop }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for hoc_ky, data in scores_by_semester.items() %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Điểm Học kỳ: {{ hoc_ky }} (GPA: {{ data.gpa | round(2) }})</h2>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Môn học</th>
+                        <th class="text-center">Số TC</th>
+                        <th class="text-center">Điểm QT</th>
+                        <th class="text-center">Điểm Thi</th>
+                        <th class="text-center">Hệ số QT</th>
+                        <th class="text-center">Hệ số Thi</th>
+                        <th class="text-center">Điểm TB</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score in data.scores %}
+                    <tr>
+                        <td>{{ score.ten_mon_hoc }}</td>
+                        <td class="text-center">{{ score.so_tin_chi }}</td>
+                        <td class="text-center">{{ score.diem_qua_trinh }}</td>
+                        <td class="text-center">{{ score.diem_thi }}</td>
+                        <td class="text-center">{{ score.he_so_qua_trinh }}</td>
+                        <td class="text-center">{{ score.he_so_thi }}</td>
+                        <td class="text-center">{{ score.diem_trung_binh | round(2) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6" class="text-end"><strong>Tổng số tín chỉ:</strong></td>
+                        <td class="text-center"><strong>{{ data.total_credits }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card mb-4">
+    <div class="card-body text-center text-muted">
+        Chưa có dữ liệu điểm học tập.
+    </div>
+</div>
+{% endfor %}
+
+<div class="card">
+    <div class="card-header bg-white">
+        <h2 class="h5 mb-0">Bảng điểm rèn luyện</h2>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Học kỳ</th>
+                        <th class="text-center">Điểm Cơ bản</th>
+                        <th class="text-center">Điểm Hoạt động</th>
+                        <th class="text-center">Điểm Trừ</th>
+                        <th class="text-center">Tổng Điểm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score in training_scores %}
+                    <tr>
+                        <td>{{ score.hoc_ky }}</td>
+                        <td class="text-center">{{ score.diem_co_ban if score.diem_co_ban is not none else 0 }}</td>
+                        <td class="text-center">{{ score.diem_cong_hoat_dong if score.diem_cong_hoat_dong is not none else 0 }}</td>
+                        <td class="text-center">{{ score.diem_tru if score.diem_tru is not none else 0 }}</td>
+                        <td class="text-center">{{ score.tong_diem if score.tong_diem is not none else 0 }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">Chưa có dữ liệu điểm rèn luyện.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Quay lại
+    </a>
+</div>
+{% endblock %}

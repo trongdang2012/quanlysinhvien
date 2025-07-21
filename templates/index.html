@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Danh sách Sinh viên
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">Danh sách Sinh viên</h1>
+        {% if current_user.role == 'admin' %}
+        <div>
+            <a href="{{ url_for('add') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Thêm Sinh viên
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if current_user.role == 'admin' %}
+        <div class="card bg-light mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Thêm từ file Excel</h5>
+                <form action="{{ url_for('upload_excel') }}" method="post" enctype="multipart/form-data" class="d-flex">
+                    <input type="file" name="excel_file" class="form-control me-2" accept=".xlsx, .xls" required>
+                    <button type="submit" class="btn btn-success flex-shrink-0">
+                        <i class="bi bi-upload"></i> Tải lên
+                    </button>
+                </form>
+                <small class="form-text text-muted">File Excel phải có các cột: <b>ma_sv, ho_ten, ngay_sinh, gioi_tinh, lop</b>.</small>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã SV</th>
+                        <th>Họ tên</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sv in students %}
+                    <tr>
+                        <td>{{ sv.ma_sv }}</td>
+                        <td>{{ sv.ho_ten }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('student_details', ma_sv=sv.ma_sv) }}" class="btn btn-info btn-sm" title="Xem chi tiết">
+                                <i class="bi bi-eye-fill"></i> Chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">Chưa có sinh viên nào.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

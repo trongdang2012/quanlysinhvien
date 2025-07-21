@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Thêm Điểm rèn luyện
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h1 class="h4 mb-0">Thêm Điểm rèn luyện</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="ma_sv" class="form-label">Mã Sinh viên</label>
+                        <select class="form-select" id="ma_sv" name="ma_sv" required>
+                            <option value="">Chọn sinh viên</option>
+                            {% for student in students %}
+                            <option value="{{ student.ma_sv }}">{{ student.ho_ten }} ({{ student.ma_sv }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hoc_ky" class="form-label">Học kỳ</label>
+                        <input type="text" class="form-control" id="hoc_ky" name="hoc_ky" placeholder="Ví dụ: 20241" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="diem_co_ban" class="form-label">Điểm Cơ bản</label>
+                        <input type="number" class="form-control" id="diem_co_ban" name="diem_co_ban" min="0" max="100" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="diem_tru" class="form-label">Điểm Trừ</label>
+                        <input type="number" class="form-control" id="diem_tru" name="diem_tru" min="0" max="100" value="0">
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ url_for('diemrenluyen') }}" class="btn btn-secondary me-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Thêm Điểm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

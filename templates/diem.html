@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Danh sách Điểm học tập
+{% endblock %}
+
+{% block content %}
+<style>
+    /* CSS để tô màu nhạt cho ô điểm bị cảnh báo */
+    .table-warning-grade {
+        background-color: #fff3cd; /* Màu vàng nhạt */
+    }
+</style>
+
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">Danh sách Điểm học tập</h1>
+        {% if current_user.role == 'admin' %}
+        <div>
+            <a href="{{ url_for('add_diem') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Thêm Điểm
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        
+        {% if current_user.role == 'admin' %}
+        <div class="card bg-light mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Thêm từ file Excel</h5>
+                <form action="{{ url_for('upload_diem_excel') }}" method="post" enctype="multipart/form-data" class="d-flex">
+                    <input type="file" name="excel_file" class="form-control me-2" accept=".xlsx, .xls" required>
+                    <button type="submit" class="btn btn-success flex-shrink-0">
+                        <i class="bi bi-upload"></i> Tải lên
+                    </button>
+                </form>
+                <small class="form-text text-muted mt-2">Đảm bảo file Excel có các cột: ma_sv, ma_mon_hoc, diem_qua_trinh, diem_thi.</small>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <form id="filterForm" method="GET" action="{{ url_for('diem') }}" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="hoc_ky" class="form-label">Lọc theo Học kỳ:</label>
+                    <select class="form-select" id="hoc_ky" name="hoc_ky">
+                        <option value="">Tất cả học kỳ</option>
+                        {% for hoc_ky_option in all_hoc_kies %}
+                        <option value="{{ hoc_ky_option }}" {% if selected_hoc_ky == hoc_ky_option %}selected{% endif %}>
+                            {{ hoc_ky_option }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="ma_mon_hoc" class="form-label">Lọc theo Môn học:</label>
+                    <select class="form-select" id="ma_mon_hoc" name="ma_mon_hoc">
+                        <option value="">Tất cả môn học</option>
+                        {% for mon_hoc_option in all_mon_hocs_for_dropdown %}
+                        <option value="{{ mon_hoc_option.ma_mon_hoc }}" {% if selected_ma_mon_hoc == mon_hoc_option.ma_mon_hoc %}selected{% endif %}>
+                            {{ mon_hoc_option.ten_mon_hoc }} ({{ mon_hoc_option.ma_mon_hoc }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-funnel-fill"></i> Lọc
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã SV</th>
+                        <th>Họ tên</th>
+                        <th>Học kỳ</th>
+                        <th>Môn học</th>
+                        <th class="text-center">Điểm QT</th>
+                        <th class="text-center">Điểm Thi</th>
+                        <th class="text-center">Điểm TB</th>
+                        {% if current_user.role == 'admin' %}
+                        <th class="text-center">Hành động</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for diem in diems %}
+                    <tr>
+                        <td>{{ diem.ma_sv }}</td>
+                        <td>{{ diem.ho_ten }}</td>
+                        <td>{{ diem.hoc_ky }}</td>
+                        <td>{{ diem.ten_mon_hoc }}</td>
+                        <td class="text-center">{{ diem.diem_qua_trinh }}</td>
+                        <td class="text-center">{{ diem.diem_thi }}</td>
+                        {# Kiểm tra nếu sinh viên bị cảnh báo ở môn này để thêm class tô màu #}
+                        <td class="text-center {% if (diem.ma_sv, diem.ma_mon_hoc) in warning_students_and_subjects %}table-warning-grade{% endif %}">
+                            {{ diem.diem_trung_binh | round(2) }}
+                        </td>
+                        {% if current_user.role == 'admin' %}
+                        <td class="text-center">
+                            <a href="{{ url_for('edit_diem', id=diem.id) }}" class="btn btn-warning btn-sm" title="Sửa">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{{ url_for('delete_diem', id=diem.id) }}" class="btn btn-danger btn-sm" title="Xoá" onclick="return confirm('Bạn có chắc muốn xoá điểm này?')">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="{% if current_user.role == 'admin' %}8{% else %}7{% endif %}" class="text-center text-muted">Chưa có dữ liệu điểm.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if warning_list %}
+        <div class="alert alert-danger mt-4">
+            <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Cảnh báo học tập</h4>
+            <p>Danh sách các sinh viên có điểm trung bình môn dưới 4.0:</p>
+            <hr>
+            <ul class="mb-0">
+                {% for student in warning_list %}
+                <li>
+                    <strong>{{ student.ho_ten }} ({{ student.ma_sv }})</strong> - Môn: {{ student.ten_mon_hoc }} ({{ student.hoc_ky }}) - 
+                    <strong>Điểm TB: {{ student.diem_trung_binh | round(2) }}</strong>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hocKySelect = document.getElementById('hoc_ky');
+        const filterForm = document.getElementById('filterForm');
+
+        hocKySelect.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+</script>
+{% endblock %}

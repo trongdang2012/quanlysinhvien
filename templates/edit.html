@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chỉnh sửa Sinh viên
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h1 class="h4 mb-0">Chỉnh sửa thông tin Sinh viên</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="ma_sv" class="form-label">Mã Sinh viên</label>
+                        <input type="text" class="form-control" id="ma_sv" name="ma_sv" value="{{ sv.ma_sv }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ho_ten" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="ho_ten" name="ho_ten" value="{{ sv.ho_ten }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ngay_sinh" class="form-label">Ngày sinh</label>
+                        <input type="date" class="form-control" id="ngay_sinh" name="ngay_sinh" value="{{ sv.ngay_sinh.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gioi_tinh" class="form-label">Giới tính</label>
+                        <select class="form-select" id="gioi_tinh" name="gioi_tinh">
+                            <option value="Nam" {% if sv.gioi_tinh == 'Nam' %}selected{% endif %}>Nam</option>
+                            <option value="Nữ" {% if sv.gioi_tinh == 'Nữ' %}selected{% endif %}>Nữ</option>
+                            <option value="Khác" {% if sv.gioi_tinh == 'Khác' %}selected{% endif %}>Khác</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lop" class="form-label">Lớp</label>
+                        <input type="text" class="form-control" id="lop" name="lop" value="{{ sv.lop }}" required>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ url_for('student_details', ma_sv=sv.ma_sv) }}" class="btn btn-secondary me-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Đăng ký
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h1 class="h4 mb-0">Tạo tài khoản mới</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <!-- Bạn có thể ẩn trường này đi nếu không muốn người dùng tự chọn vai trò -->
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Vai trò</label>
+                        <select class="form-select" id="role" name="role">
+                            <option value="viewer">Viewer (Sinh viên)</option>
+                            <option value="admin">Admin (Giáo viên/Lớp trưởng)</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Đăng ký</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <small>Đã có tài khoản? <a href="{{ url_for('login') }}">Đăng nhập</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

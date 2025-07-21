@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Danh sách Điểm rèn luyện
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">Danh sách Điểm rèn luyện</h1>
+        {% if current_user.role == 'admin' %}
+        <div>
+            <a href="{{ url_for('add_diemrenluyen') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Thêm Điểm Rèn Luyện
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if current_user.role == 'admin' %}
+        <div class="card bg-light mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Thêm từ file Excel</h5>
+                <form action="{{ url_for('upload_diemrenluyen_excel') }}" method="post" enctype="multipart/form-data" class="d-flex">
+                    <input type="file" name="excel_file" class="form-control me-2" accept=".xlsx, .xls" required>
+                    <button type="submit" class="btn btn-success flex-shrink-0">
+                        <i class="bi bi-upload"></i> Tải lên
+                    </button>
+                </form>
+                <small class="form-text text-muted mt-2">Đảm bảo file Excel có các cột: ma_sv, hoc_ky, diem_co_ban, diem_tru.</small>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <form id="filterForm" method="GET" action="{{ url_for('diemrenluyen') }}" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label for="hoc_ky" class="form-label">Lọc theo Học kỳ:</label>
+                    <select class="form-select" id="hoc_ky" name="hoc_ky">
+                        <option value="">Tất cả học kỳ</option>
+                        {% for hoc_ky_option in all_hoc_kies %}
+                        <option value="{{ hoc_ky_option }}" {% if selected_hoc_ky == hoc_ky_option %}selected{% endif %}>
+                            {{ hoc_ky_option }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="bi bi-funnel-fill"></i> Lọc
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã SV</th>
+                        <th>Họ tên</th>
+                        <th>Học kỳ</th>
+                        <th class="text-center">Điểm Cơ bản</th>
+                        <th class="text-center">Điểm Hoạt động</th>
+                        <th class="text-center">Điểm Trừ</th>
+                        <th class="text-center">Tổng Điểm</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for drl in diemrenluyen %}
+                    <tr>
+                        <td>{{ drl.ma_sv }}</td>
+                        <td>{{ drl.ho_ten }}</td>
+                        <td>{{ drl.hoc_ky }}</td>
+                        <td class="text-center">{{ drl.diem_co_ban if drl.diem_co_ban is not none else 0 }}</td>
+                        <td class="text-center">{{ drl.diem_cong_hoat_dong if drl.diem_cong_hoat_dong is not none else 0 }}</td>
+                        <td class="text-center">{{ drl.diem_tru if drl.diem_tru is not none else 0 }}</td>
+                        <td class="text-center">{{ drl.tong_diem if drl.tong_diem is not none else 0 }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('drl_details', drl_id=drl.id) }}" class="btn btn-info btn-sm" title="Xem chi tiết">
+                                <i class="bi bi-eye-fill"></i> Chi tiết
+                            </a>
+                            {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('edit_diemrenluyen', id=drl.id) }}" class="btn btn-warning btn-sm" title="Sửa">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{{ url_for('delete_diemrenluyen', id=drl.id) }}" class="btn btn-danger btn-sm" title="Xoá" onclick="return confirm('Bạn có chắc muốn xoá điểm này?')">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">Chưa có dữ liệu điểm rèn luyện.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hocKySelect = document.getElementById('hoc_ky');
+        hocKySelect.addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+    });
+</script>
+{% endblock %}

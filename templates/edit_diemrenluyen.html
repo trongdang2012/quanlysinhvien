@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Chỉnh sửa Điểm rèn luyện
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h1 class="h4 mb-0">Chỉnh sửa Điểm rèn luyện</h1>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="ma_sv" class="form-label">Mã Sinh viên</label>
+                        <input type="text" class="form-control" id="ma_sv" name="ma_sv" value="{{ record.ma_sv }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hoc_ky" class="form-label">Học kỳ</label>
+                        <input type="text" class="form-control" id="hoc_ky" name="hoc_ky" value="{{ record.hoc_ky }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="diem_co_ban" class="form-label">Điểm Cơ bản</label>
+                        <input type="number" class="form-control" id="diem_co_ban" name="diem_co_ban" value="{{ record.diem_co_ban if record.diem_co_ban is not none else 0 }}" min="0" max="100">
+                    </div>
+                    <div class="mb-3">
+                        <label for="diem_cong_hoat_dong" class="form-label">Điểm Cộng Hoạt động</label>
+                        <input type="number" class="form-control" id="diem_cong_hoat_dong" name="diem_cong_hoat_dong" value="{{ record.diem_cong_hoat_dong if record.diem_cong_hoat_dong is not none else 0 }}" min="0" max="100" disabled>
+                        <small class="form-text text-muted">Điểm này được tự động cập nhật từ các hoạt động đã duyệt.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="diem_tru" class="form-label">Điểm Trừ</label>
+                        <input type="number" class="form-control" id="diem_tru" name="diem_tru" value="{{ record.diem_tru if record.diem_tru is not none else 0 }}" min="0" max="100">
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ url_for('diemrenluyen') }}" class="btn btn-secondary me-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
